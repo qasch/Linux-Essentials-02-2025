@@ -1,0 +1,93 @@
+= Übungen zu Kommandos und Manpages
+:toc:
+
+== Hilfe auf der Kommandozeile
+
+=== Übung 1
+
+Macht euch mit Manpages vertraut. Werft dazu einen Blick in die Manpage von `man`. Ihr müsst hier nicht die komplette Manpage lesen, es reichen die Abschnitte `NAME, SYNOPSIS, DESCRIPTION` und `EXAMPLES` bzw. deren deutschen Bezeichnungen.
+
+=== Übung 2
+
+Findet die Bedeutung der folgenden Optionen von `ls` mit Hilfe der Manpage heraus:
+
+----
+-i
+-X
+-r
+-l
+-a
+-S
+-p
+-t
+-R
+-d
+----
+
+Findet heraus, was folgende Optionen von `ls` bewirken:
+
+ ls -lisahF
+
+Probiert die Optionen natürlich auch aus! Dazu macht es vielleicht Sinn, sich den Inhalt eines Verzeichnisses mit vielen Einträgen anzeigen zu lassen, z.B. mit `ls /etc`.
+
+=== Übung 3 (Zusatz)
+
+Mit dem Kommando `date` kann man sich das aktuelle Datum und die aktuelle Uhrzeit ausgeben lassen. `date` kann aber noch mehr.
+
+1. Angenommen, jetzt ist der 15.05.2023, 13:34 Uhr und 56 Sekunden. Studieret die Dokumentation von `date` und gebt die Formatierungsanweisungen an, mit denen die folgenden Ausgaben erreichen werden können:
+
+   1. 15.05.2023
+   2. 13:34 Uhr (aktuelle Uhrzeit)
+
+2. Wie spät ist es denn gerade in Los Angeles? Versucht die Lösung zuerst in den Manpages zu finden, recherchiert ansonsten im Internet.
+
+== Arten von Kommandos
+
+=== Übung 4
+
+Welche der folgenden Kommandos sind bei der BASH extern bzw. intern realisiert? Bzw. was bedeutet das denn überhaupt _intern_ bzw. _extern_ realisiert?
+
+----
+alias
+echo
+rm
+test
+----
+
+Vielleicht hilft euch hier das Kommanod `type` weiter.
+
+== Kommandos 5
+
+a) Teilt folgenden Zeilen in die Bestandteile Befehl, Option(en)/Parameter und Argument(e) auf:
+
+ cat -n /etc/passwd
+
+|===
+| Befehl:  | cat         |
+| Option:  | -n          |
+| Argument | /etc/passwd |
+|===
+
+ ls -l /etc 
+
+|===
+| Befehl:  | |
+| Option:  | |
+| Argument | |
+|===
+
+ ls -l -a 
+
+|===
+| Befehl:  |   |
+| Option:  |   |
+| Argument |   |
+|===
+
+ cd /home/user 
+
+|===
+| Befehl:  |   |
+| Option:  |   |
+| Argument |   |
+|===

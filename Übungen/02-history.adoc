@@ -1,0 +1,31 @@
+= Übungen zu History und Variablen
+
+== History
+
+=== Übung
+
+Macht euch mit weiteren Funktionen der History vertraut, indem ihr die Manpage (`man history`) studiert und anschliessend mit den folgenden Befehlen "herumspielt".
+
+Schreibt auf, was man mit den folgenden Kommandos erreichen kann:
+
+
+ history 
+ history <zahl>
+
+ !!
+ !-<zahl>
+ !<zahl>
+ !<zeichenfolge> 
+ !?<zeichenfolge>
+
+ !$
+
+ <Strg+r><zeichenfolge> gefolgt von <Strg+r> (mehrmals)
+
+Zusatz:
+
+ !-<zahl>:$
+ !!:0-
+ !<zahl>^
+
+
