@@ -14,7 +14,7 @@ Dieses Verzeichnis ist nun das *aktuelle Verzeichnis* für die folgenden Übunge
 
 4. Erstellt eine Kopie der Datei `my_file.txt` mit dem Namen `my_file_copy.txt` im aktuellen Verzeichnis.
 
-5. Verschiebt die Datei `my_file.txt` in das Verzeichnis `my_folder` mit dem Kommando `mv`.
+5. Verschiebt die Datei `my_file_copy.txt` in das Verzeichnis `my_folder` mit dem Kommando `mv`.
 
 6. Löscht die Datei `my_file_copy.txt` im aktuellen Verzeichnis mit dem Kommando `rm`.
 
