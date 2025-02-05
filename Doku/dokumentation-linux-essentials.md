@@ -198,8 +198,9 @@ Einzige Ausnahme ist die Tilde `~`, welche den absoluten Pfad zum Heimatverzeich
 cd ~/Somedir
 cd /home/tux/Somedir
 ```
-### Pattern Matching
-
 ### Alles ist eine Datei
 
+"Alles ist eine Datei" ist ein zentrales Konzept in Unix/Linux, das bedeutet, dass nahezu alle Ressourcen im System – einschließlich regulärer Dateien, Verzeichnisse, Geräte, Prozesse und Sockets – über das Dateisystem als Datei abstrahiert werden. Dadurch können viele Systemkomponenten über einheitliche Schnittstellen (z. B. Dateioperationen wie `open`, `read`, `write`) angesprochen werden.
+
+### Pattern Matching
 
