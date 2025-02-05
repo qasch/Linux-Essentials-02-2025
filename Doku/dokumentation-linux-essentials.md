@@ -12,6 +12,13 @@ Erklärung zur obigen Syntax (angelehnt an Manpages):
 - `[  ]` was in eckigen Klammern steht, ist **optional** -> wir können also Optionen oder Argumente übergeben, **müssen** es aber nicht
 - `...` die drei Punkte bedeuten, dass auch mehrere Optionen oder Argumente übergeben werden können
 
+>[!NOTE]
+> Es macht fast immer keinen Unterschied, ob wir die Option(en) vor oder nach den Argumenten schreiben:
+> ```bash
+> rm -r somedir
+> rm somedir -r
+>```
+
 #### Beispiele
 ```
 ls -l               # Übergabe der Option -l
@@ -78,11 +85,121 @@ Um die Verbindung aufbauen zu können, brauchen wir folgende Informationen:
 - IP-Adresse des entfernten Rechners
 - Username und Passwort eines dort existierenden Benutzers
 
+## Dateioperationen
 
+### Verzeichnisse erstellen
 
+Mit dem Kommando `mkdir` (*make directory*) können wir Verzeichnisse erstellen.
+```bash
+mkdir <name-des-verzeichnisses>
+mkdir <pfad-zum-verzeichniss>
+```
+### Dateien erstellen
 
+Dateien können auf vielfältige Art und Weise erstellt werden. Ein einfacher Weg, leere Dateien zu erstellen, ist mit dem Kommando `touch`.
+```bash
+touch <name-der-datei>
+touch <name-der-datei-1> <name-der-datei-2> ...
+touch <pfad-zur-datei>
+```
+Dateien können aber auch z.B. mit einem Editor wie `nano` erstellt werden.
+```bash
+nano <name-der>
+```
+### Editor nano
 
+`nano` ist ein einfacher Editor, der auf den meisten Linux Distributionen vorinstalliert ist. Als Hilfe zur Bedienung wird unten ein Menü mit Tastenkürzeln angezeigt. Hier bedeutet das Zeichen `^` die Taste `STRG`.
 
+Einige wichtige Tastenkombinationen:
 
+- `STRG+O` Datei speichern unter...  (Name kann/muss angegeben werden)
+- `STRG+S` Datei speichern (unter dem gleichen Namen)
+- `STRG+X` Editor verlassen (bei ungespeicherten Änderungen werden wir gefragt, ob wir diese speichern möchten)
+
+### Dateien und Verzeichnisse kopieren
+
+Dateien und Verzeichnisse können mit dem Kommando `cp` (*copy*) kopiert werden.
+```bash
+cp <quelle> <ziel>
+cp <pfad-zur-quelle> <pfad-zum-ziel>
+```
+**Vorsicht:** Wenn wir eine bestehende Datei als Ziel angeben, wird die Zieldatei **ohne Nachfrage** ersetzt und nicht etwas der Inhalt der Quelldatei an die Zieldatei angefügt.
+
+Beim Kopieren von Verzeichnissen müssen wir an die Option `-r` (*rekursiv*) denken. 
+```bash
+cp -r <quellverzeichnis> <zielverzeichnis>
+```
+Der Grund ist, dass ein Verzeichnis nicht leer ist, die Kopieraktion also wiederholt/rekursiv ausgeführt werden muss.
+
+### Dateien und Verzeichnisse löschen
+
+Dateien und Verzeichnisse können mit dem Kommando `rm` (*remove*) gelöscht werden.
+
+Analog zum Kopieren von Verzeichnissen müssen wir auch beim Löschen von Verzeichnissen die Option `-r` angeben.
+
+> [!NOTE] 
+> Dies gilt übrigens für sehr viele Kommandos: funktioniert die Anwendung eines Kommandos auf eine Datei, nicht aber auf ein Verzeichnis, so feht oft einfach nur die Option `-r`.
+
+```bash
+rm <pfad-zur-datei>
+rm -r <pfad-zum-verzeichniss>
+```
+>[!NOTE]
+> Wenn wir eine Datei löschen, so löschen wir nicht die Datei an sich. Wir entfernen lediglich den Dateinamen bzw. Pointer auf die Daten der Datei auf dem Speichermedium. Dieser Bereich im Speicher wird dann als wieder überschreibbar gemeldet.
+>
+> Die Daten könnten also solange keine weitere Schreiboperation auf diesen Speicherbereich erfolgt ist wiederhergestellt werden.
+
+### Dateien und Verzeichnisse verschieben / umbenennen
+
+Dateien und Verzeichnisse können mit dem Kommando `mv` (*move*) verschoben und umbenannt werden.
+
+Beim Verschieben von Verzeichnissen dürfen wir die Option `-r` *nicht* angeben. Der Grund dafür ist, dass beim Verschieben nicht wie vielleicht angenommen eine Art *ausschneiden* und *einfügen* stattfindet, sondern wie beim Löschen lediglich der Dateiname ersetzt wird. 
+
+Es muss also keine rekursive Operation auf dem Speichermedium stattfinden. Das ist auf unten stehendender Illustration vielleicht besser zu erkennen.
+```bash
+mv <quelle> <ziel>
+mv <quellverzeichnis> <zielverzeichnis>
+mv <alter-name> <neuer-name>
+```
+### Illustration kopieren, löschen, verschieben
+
+![illustration-cp-rm-mv](./images/cp-mv-rm.png)
+
+### relative und absolute Pfadangaben
+
+Immer wenn wir eine Dateioperation durchführen, müssen wir den Pfad (eine Art *Wegbeschreibung*) zu der jeweiligen Datei angeben. Diese Angabe können wir auf zwei unterschiedliche Arten und Weisen machen: *relativ* oder *absolut*.
+
+#### relative Pfadangaben
+
+Eine *relative Pfadangabe* beschreibt den Weg ausgehend vom **aktuellen Standort** (aktuelles Verzeichnis) im Dateisystem.
+```bash
+cp somefile Somedir/
+```
+##### spezielle Verzeichniseinträge (Special Directory Entries) . und ..
+
+- Sie gehören zur Kategorie der relativen Pfadangaben (Relative Pathnames)
+- Sie werden auch als *Pseudodirektoren* (Pseudo-Directories) bezeichnet
+- Manchmal nennt man sie auch *Implizite Links* oder *Selbstreferenzierende Einträge*
+- Formal sind sie aber einfach reguläre Einträge im Dateisystem, die bei jedem Verzeichnis automatisch vorhanden sind.
+
+- `.` (Punkt) symbolisiert das aktuelle Verzeichnis
+- `..` (doppelter Punkt) symbolisiert das übergeordnete Verzeichnis (Parent Directory)
+
+#### absolute Pfadangaben
+
+Eine *absolute Pfadangabe* beschreibt den Weg ausgehend von der Wurzel `/` (bzw. `\` in Windows) des Dateisystembaums.
+```bash
+cp /home/tux/somefile /home/tux/Somedir
+```
+Absolute Pfadangaben können wir immer daran erkennen, dass das erste Zeichen des Pfades ein Slash `/` ist.
+
+Einzige Ausnahme ist die Tilde `~`, welche den absoluten Pfad zum Heimatverzeichnis des aufrufenden Benutzers symbolisiert. Folgende Pfadangaben sind identisch:
+```bash
+cd ~/Somedir
+cd /home/tux/Somedir
+```
+### Pattern Matching
+
+### Alles ist eine Datei
 
 
