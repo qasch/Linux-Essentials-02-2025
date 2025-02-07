@@ -204,3 +204,67 @@ cd /home/tux/Somedir
 
 ### Pattern Matching
 
+Ein *Pattern* ist ein *Muster*, bzw. ein *Platzhalter* welches auf eine Zeichenfolge passt, so dass wir damit z.B. nach Dateien bzw. Pfadangaben suchen können (mit entsprechenden Kommandos).
+
+Wir können in einem *Pattern* bestimmte Sonderzeichen verwenden, um dieses allgemeingültiger zu machen:
+
+*Globbing Characters:*
+
+- `*` (*Asterisk*) -> Steht für beliebige Zeichen, welche beliebig oft vorkommen können (auch keinmal)
+- `?` -> Steht für jedes beliebige Zeichen welches, **exakt** einmal vorkommt
+
+Weitere Möglichkeiten für Pattern Matching:
+
+- `!(pattern)` Exkludiert das angegebene Pattern (in dem Pattern dürfen auch wieder die oben angegebenen *Globbing Characters* vorkommen
+
+Beispiele:
+```bash
+rm *.jpg       # löscht alle Dateien mit der Endung .jpg
+ls datei?.txt  # zeigt nur Dateien an, bei denen nach der Zeichenfolge datei noch ein weiteres beliebiges Zeichen folgt und die die Endung .txt haben
+mv * !(o*) somdir/    # verschiebt alle Dateien nach somedir, ausser Dateien, die mit einem o beginnen
+```
+## Aliase
+
+Aliase sind selbstdefinierte Abkürzungen für Kommandos mit Optionen. Wir verwenden Aliase z.B. für häufig verwendete Kommandos mit Optionen oder auch Argumenten wie Pfadangaben.
+
+Das Kommando `alias` an sich zeigt alle in der aktullen Shell gültigen Aliase an.
+
+### Definition von Aliasen
+```bash
+alias <name-des-aliases>='<kommando> -<option> <argument>'
+alias la='ls -a'
+alias rm='rm -i'
+alias somedir='cd ~/path/to/specific/dir/'
+```
+Wenn wir Aliase einfach so auf der Kommandozeile definieren, sind diese nur in der aktullen Shell gültig. Wollen wir Aliase persistent definieren (für alle neu geöffneten Shells bzw. auch nach einem Reboot), so müssen wir die Definition in dafür vorgesehene Dateien eintragen.
+
+Dieses Konzept gilt nicht nur für Aliase, sondern generell für die Konfiguration unseres Systems.
+
+Aliase werden z.B. direkt in der Datei `~/.bashrc` oder besser noch in der Datei `~/.bash_aliase` definiert (wenn wir als Shell die BASH verwenden).
+
+## Subshells
+
+Innerhalb einer laufenden Shell können weitere Shells gestartet werden. Dies sind sogenannte *Subshell* oder *Kindshells*. Diese können entweder aktiv, z.B. durch die Eingabe des Kommandos `bash` gestartet werden, Subshells werden aber auch oft gestartet, ohne dass wir dies aktiv machen.
+
+Es ist wichtig zu wissen, dass z.B. Aliase *nicht* in Subshells vererbt werden!
+
+TODO
+
+Auch beim Wechsel in einen anderen Benutzeraccount wird eine Subshell mit den Berechtigungen dieses Benutzers gestartet.
+
+Wir können uns einen Überblick über die momentan laufenden Shells bzw. Subshells mit dem Kommando `ps` verschaffen. Mehr zu `ps` siehe [unten].
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
