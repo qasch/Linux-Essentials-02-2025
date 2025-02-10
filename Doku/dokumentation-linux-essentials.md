@@ -221,7 +221,7 @@ Beispiele:
 ```bash
 rm *.jpg       # löscht alle Dateien mit der Endung .jpg
 ls datei?.txt  # zeigt nur Dateien an, bei denen nach der Zeichenfolge datei noch ein weiteres beliebiges Zeichen folgt und die die Endung .txt haben
-mv * !(o*) somdir/    # verschiebt alle Dateien nach somedir, ausser Dateien, die mit einem o beginnen
+mv !(o*) ../somdir/    # verschiebt alle Dateien des aktullen Verzeichnisses nach ../somedir, ausser Dateien, die mit einem o beginnen
 ```
 ## Aliase
 
@@ -254,14 +254,84 @@ Auch beim Wechsel in einen anderen Benutzeraccount wird eine Subshell mit den Be
 
 Wir können uns einen Überblick über die momentan laufenden Shells bzw. Subshells mit dem Kommando `ps` verschaffen. Mehr zu `ps` siehe [unten].
 
+## Variablen
 
+### Umgebungsvariablen / Environment Variables
 
+Sind systemweit gültig, enthalten wichtige Informationen, damit unser System wie gewünscht funktioniert, bestimmte Kommandos greifen auf diese Variablen zurück. Umgebungsvariablen werden nach Konvention komplett in Grossbuchstaben geschrieben.
 
+Einige Beispiele:
+```bash
+$HOME       # Heimatverzeichnis des aktuellen Benutzers
+$PWD        # absoluter Pfad des aktuellen Verzeichnisses
+$USER       # Login Name des aktuellen Benutzers
+$SHELL      # Shell des aktuellen Benutzers
 
+$PATH       # Liste der Verzeichnisse, die nach ausführbaren Dateien durchsucht werden, so dass wir diese ohne eine Pfadangabe aufrufen können
+```
+Systemvariablen können unterschiedliche Werte enthalten, je nachdem welcher Benutzer angemeldet ist. 
 
+> [!TODO] Wo sind diese Variablen definiert?
 
+### Shellvariablen / Shell Variables
 
+Sind nur gültig in der aktuellen Shell, können vom Benutzer selbst definiert werden. Werden *nicht* automatisch in Subshells vererbt, es sei denn sie werden mit dem Kommando `export` exportiert.
+```bash
+foo=bar         # weist der Variablen foo den Wert bar zu
+export foo      # macht die Variable foo auch in Subshells gültig
+export hallo=huhu # weist der Variablen hallo den Wert huhu zu und macht diese in Subshells gültig
+```
+### Variablensubstitution
 
+Bei der Variablensubstitution wird der Name der Variablen mit dem in ihr hinterlegten Wert ersetzt.
+
+```bash
+echo $foo       # gibt den Wert der Variablen foo aus
+echo ${foo}     # gibt den Wert der Variablen foo aus
+```
+
+### Kommandosubstitution
+
+Durch die *Kommandosubstitution* können wir Variablen die Ausgabe eines Kommandos zuweisen. Genauer gesagt wird eine *Subshell* gestartet, in welcher das Kommando ausgeführt wird.
+```bash
+aktuelles_datum=$(date)
+aktuelles_datum=`date`     # veraltete Syntax
+```
+### Rechnen mir Variablen / Arithmetic Operations
+
+Wir können auch einfache Rechenoperationen in der BASH durchführen:
+```bash
+zahl1=3
+zahl2=4
+summe=$(( zahl1 + zahl2 ))
+summe=$((zahl1+zahl2))
+let summe = $zahl1 + $zahl2 
+```
+## Escaping / Maskieren von Sonderzeichen
+Bestimmte Zeichen haben eine Sonderbedeutung für die BASH. Das wohl wichtigste Sonderzeichen ist das *Leerzeichen*: 
+
+> Das Leerzeichen ist ein Sonderzeichen. Das Leerzeichen ist das **Trennzeichen**.
+
+Weitere Sonderzeichen sind:
+```bash
+*       # Asterisk
+?       
+#       # Kommentarzeichen
+$       # Subsitution
+!       # History Expansion
+\       # Backslash
+'
+''
+```
+Sonderzeichen können durch das sogenannte *Escaping* oder *Maskieren* ihrer Sonderbedeutung entledigt werden, so dass sie von der Shell wie reguläre Satzzeichen behandelt werden.
+
+Zum Maskieren gibt es drei verschiedene Wege:
+
+1. Maskieren mit dem Backslash `\': Der Backslash maskiert (nur) das **direkt darauffolgende** Zeichen
+
+2. Maskieren mit einfachen Hochkommata `'`: Einfache Hochkommata maskieren **jedes** in ihnen eingeschlossene Zeichen.
+
+3. Maskieren mit doppelten Hochkommata `"`: Doppelte Hochkommata maskieren **fast** alle in ihnen eingeschlossene Zeichen, nicht aber das Dollarzeichen `$`, Backticks `\`` für die Kommandosubstitution und der Backslash `/` vor bestimmten Zeichen.
 
 
 
