@@ -333,6 +333,64 @@ Zum Maskieren gibt es drei verschiedene Wege:
 
 3. Maskieren mit doppelten Hochkommata `"`: Doppelte Hochkommata maskieren **fast** alle in ihnen eingeschlossene Zeichen, nicht aber das Dollarzeichen `$`, Backticks `\`` für die Kommandosubstitution und der Backslash `/` vor bestimmten Zeichen.
 
+## Archivierung und Komprimierung
+
+### Archivierung mit `tar`
+
+*Archivierung* bezeichnet das Zusammenfassen mehrerer Dateien und Verzeichnisse in eine einzige Datei, ohne zwingende Kompression. Dadurch bleibt die ursprüngliche Struktur der Dateien erhalten, so können mehrere Dateien einfacher gespeichert oder übertragen werden.
+
+Unter Linux wird das Kommando `tar` (*Tape Archiver*) zur Archivierung verwendet. `tar` ist ein sehr altes Programm und die Syntax (freundlich ausgedrückt) etwas gewöhnungsbedürftig. Kurzoptionen haben oft keine direkte Entsprechung zu den Langoptionen.
+
+[!TODO] screenhost cat archiv
+
+Einige wichtige Optioenen zu `tar`:
+```bash
+# Archiv aus Dateien erstellen
+tar -cf archiv.tar file1.txt file2.txt file3.txt 
+tar --create --file archiv.tar file1.txt file2.txt file3.txt 
+
+# Dateien aus Archiv extrahieren
+tar -xf archiv.tar
+tar --extract --file archiv.tar
+
+# Die Option -v / --verbose gibt eine Rückmeldung darüber, was tar macht
+tar -xvf archiv.tar
+tar --extract --verbose --file archiv.tar
+
+# Einzelne Datei aus Archiv extrahieren
+tar -xf archiv.tar file_to_extract.txt
+
+# Inhalt eines Archivs anzeigen/auflisten
+tar -tf archiv.tar
+tar --list --file archiv.tar
+
+# Datei einem bestehenden Archiv hinzufügen
+tar -rf archiv.tar other_file.txt
+tar --append --file archiv.tar other_file.txt
+
+# Archiv aus einem Verzeichnis erstellen
+
+# Differentielles Archiv erstellen
+
+# Bestimmte Dateien *nicht* hinzufügen
+
+# Archiv an einem bestimmten Ort extrahieren
+```
+> [!IMPORTANT]
+> Die Option `-f` erfordert **zwingend** ein direkt darauffolgendes Argument - den Namen des Archivs. Insofern ist die Reihenfolge der Optionen hier **nicht** egal.
+
+## Unix Epoch Time
+
+Die *Unix Epoch Time* (auch *POSIX-Zeit* oder *Unix-Zeitstempel*) ist die Anzahl der Sekunden, die seit dem 1. Januar 1970, 00:00:00 UTC vergangen sind. Sie wird oft in Betriebssystemen und Programmiersprachen verwendet, um Zeitangaben als einfache Ganzzahlen zu speichern und zu verarbeiten.
+
+So ist es möglich, Daten in unterschiedlichen Formaten (z.B. Zeitzonen) anzugeben oder Differenzen zwischen zwei Zeitpunkten zu berechnen.
+
+
+
+
+
+
+
 
 
 
