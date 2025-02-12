@@ -418,7 +418,6 @@ gzip somefile
 bzip2 somefile
 xz somefile
 
-```bash
 # Datei dekomprimieren:
 gzip -d somefile.gz
 bzip2 -d somefile.bz2
