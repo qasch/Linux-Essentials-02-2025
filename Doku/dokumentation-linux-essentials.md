@@ -337,7 +337,7 @@ Zum Maskieren gibt es drei verschiedene Wege:
 
 ### Archivierung mit `tar`
 
-*Archivierung* bezeichnet das Zusammenfassen mehrerer Dateien und Verzeichnisse in eine einzige Datei, ohne zwingende Kompression. Dadurch bleibt die ursprüngliche Struktur der Dateien erhalten, so können mehrere Dateien einfacher gespeichert oder übertragen werden.
+*Archivierung* bezeichnet das Zusammenfassen **mehrerer** Dateien und Verzeichnisse in eine **einzige** Datei, ohne zwingende Kompression. Dadurch bleibt die ursprüngliche Struktur der Dateien erhalten, so können mehrere Dateien einfacher gespeichert oder übertragen werden.
 
 Unter Linux wird das Kommando `tar` (*Tape Archiver*) zur Archivierung verwendet. `tar` ist ein sehr altes Programm und die Syntax (freundlich ausgedrückt) etwas gewöhnungsbedürftig. Kurzoptionen haben oft keine direkte Entsprechung zu den Langoptionen.
 
@@ -383,6 +383,10 @@ tar --append --file archiv.tar other_file.txt
 # Bestimmte Dateien *nicht* hinzufügen
 
 # Archiv an einem bestimmten Ort extrahieren
+
+
+
+--strip-components=NUMBER
 ```
 > [!IMPORTANT]
 > Die Option `-f` erfordert **zwingend** ein direkt darauffolgendes Argument - den Namen des Archivs. Insofern ist die Reihenfolge der Optionen hier **nicht** egal.
@@ -393,12 +397,97 @@ Die *Unix Epoch Time* (auch *POSIX-Zeit* oder *Unix-Zeitstempel*) ist die Anzahl
 
 So ist es möglich, Daten in unterschiedlichen Formaten (z.B. Zeitzonen) anzugeben oder Differenzen zwischen zwei Zeitpunkten zu berechnen.
 
+### Komprimierung
 
+Durch die Komprimierung können wir **eine einzelne** Datei mit Hilfe bestimmter Algorithmen verlustfrei in ihrer Grösse verkleinern.
 
+*Analogie Komprimierung:* getrocknete Handtücher, die im Wasser wieder gross werden
 
+*Analogie Archivierung:* einzelne Blumen werden zu einem Strauss gebunden
 
+Um **mehrere** Dateien oder ganze Verzeichnisse zu komprimieren, müssen wir zusätzlich im Vorfeld die *Archivierung* anwenden. Bestimmte Programme in Windows-Systemen vereinen diese beiden Konzepte unter einer Haube. Wir müssen uns jedoch merken, dass dies grundsätzlich zwei komplett verschiedene Konzepte sind.
 
+Auch unter Linux ist es möglich beide Schritte auf einmal mit dem Kommando `tar` durchzuführen, dabei ruft `tar` im Hintergrund jedoch die jeweiligen Kommandos zur Komprimierung auf.
 
+Unter Linux nutzen wir standardmässig drei verschiedene Tools zur Komprimierung: `gzip`, `bzip2` und `xz`.
+
+Die Optionen der drei Kommandos sind mehr oder weniger identisch.
+```bash
+# Datei komprimieren:
+gzip somefile
+bzip2 somefile
+xz somefile
+
+```bash
+# Datei dekomprimieren:
+gzip -d somefile.gz
+bzip2 -d somefile.bz2
+xz -d somefile.xz
+
+gunzip somefile.gz
+bunzip2  somefile.bz2
+unxz -d somefile.xz
+```
+>[!NOTE]
+> Sowohl bei der Komprimierung als auch bei der Dekomprimierung wird die jeweilige Originaldatei nicht behalten, sondern ersetzt.
+> Dies können wir mit der Option `-k` (`--keep`) umgehen.
+
+>[!NOTE]
+> Es gibt für alle drei Algorithmen auch die Option `-l` bzw.  `--list`. Hiermit können wir uns einen Überblick/Vergleich der komprimierten und unkomprimierten Datei und die Kompressionsrate anzeigen lassen.
+> 
+> Interessanterweise ist dies nur ein *Listing*, es findet zwar eine Dekomprimierung der Datei statt, allerdings nur im RAM, selbst wenn wir zusätzlich die Option `-d` zur Dekomprimierung angeben.
+
+### Vergleich der drei Komprimierungsalgorithmen
+
+Vergleich der Geschwindigkeiten und resultierenden Grössen beim Komprimieren:
+
+![vergleich-komprimierung](./images/vergleich-komprimierung.png)
+Vergleich der Geschwindigkeiten beim Dekomprimieren:
+
+![vergleich-dekomprimierung](./images/vergleich-dekomprimierung.png)
+Zusammenfassend lassen sich folgende Aussagen über die drei Komprimierungsalgorithmen treffen:
+
+- `gzip` ist am schnellsten bei der Komprimierung, die komprimierte Datei ist aber nicht besonders klein
+- `bzip2` braucht lange für die Komprimierung und die Dekomprimierung, erzeugt aber eine ziemlich kleine Datei
+- `xz` braucht ziemlich lange bei der Komprimierung, erzeugt liegt bei der Kompressionsrate zwischen den beiden anderen, ist aber sehr schnell bei der Dekomprimierung
+
+Es gibt also für alle drei bestimmte Anwendungsfälle, in denen sie ihre Stärken ausspielen können.
+
+### Erstellen und Entpacken eines komprimierten Archivs direkt mit `tar`
+
+#### Komprimiertes Archiv erzeugen
+```bash
+# gzip komprimiertes Archiv erstellen
+tar -czf archiv.tar.gz somdir/
+tar -czvf archiv.tar.gz somdir/     # verboser Output
+
+# bzip2 komprimiertes Archiv erstellen
+tar -cjf archiv.tar.bz2 somdir/
+tar -czjf archiv.tar.bz2 somdir/     # verboser Output
+
+# xz komprimiertes Archiv erstellen
+tar -cJf archiv.tar.xz somdir/
+tar -cJvf archiv.tar.xz somdir/     # verboser Output
+```
+#### Komprimiertes Archiv entpacken
+```bash
+# mit gzip komprimiertes Archiv entpacken
+tar -xzf archiv.tar.gz
+tar -xzvf archiv.tar.gz
+
+# mit bzip2 komprimiertes Archiv entpacken
+tar -xjf archiv.tar.bz2
+tar -xzjf archiv.tar.bz2
+
+# mit xz komprimiertes Archiv entpacken
+tar -xJf archiv.tar.xz
+tar -xJvf archiv.tar.xz
+
+# automatisch jeweiligen Algorithmus anhand der Dateiendung anwenden lassen (Dateiendung muss stimmen!)
+tar -xf archiv.tar.gz
+tar -xf archiv.tar.bz2
+tar -xf archiv.tar.xz
+```
 
 
 
