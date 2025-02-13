@@ -492,6 +492,56 @@ tar -xf archiv.tar.gz
 tar -xf archiv.tar.bz2
 tar -xf archiv.tar.xz
 ```
+## Textströme und Standardkanäle
+
+Es gibt drei Standardkanäle unter Linux:
+
+| Kanalbezeichnung | Filedescriptor | Nummer |
+| ---------------- | -------------- | ------ |
+| *Standareingabekanal*  | `stdin` | 0 |
+| *Standardausgabekanal*|  `stdout` | 1 |
+| *Standardfehlerkanal*  | `stderr` | 2 |
+
+Jeder Prozess der gestartet wird, wird mit diesen drei Standardkanälen verbunden. Über diese Kanäle erhält der Prozess Daten und gibt sie auch wieder aus. So können Ein- und Ausgaben unabhängig voneinander verarbeitet und auch umgeleitet werden.
+
+Die Kanäle jedes Prozesses, der in einer Shell gestartet wird, sind automatisch mit der Shell verbunden.
+
+Durch dieses Konzept können wir durch die Kombination simpler Kommandos komplexe Aufaben lösen (-> *Kommandopipelines*) 
+
+Wir könne so z.B. auch Ausgaben von Kommandos in Dateien umleiten (-> *Redirects*).
+
+### Redirects
+
+Mit Redirects kann die der Standardausgabekanal oder der Standardfehlerkanal in eine **Datei** umgeleitet werden. Es gibt zwei Arten von Redirects:
+
+- `>` - einfacher Redirect: Erstellt eine Datei falls nicht vorhanden, **leert** eine bereits vorhandene Datei
+- `>>` - doppelter Redirect: Erstellt eine Datei falls nicht vorhanden, **hängt Ausgabe an**
+
+#### Umleitung des Standareingabekanals
+```bash
+echo huhu 1> hallo.txt   # die 1 gibt hier die Kanalnummer an
+echo huhu 1>> hallo.txt  # die 1 gibt hier die Kanalnummer an
+echo huhu > hallo.txt    # kann bei stdout auch weggelassen werden
+
+ls -l /etc > ls-ausgabe.txt
+ls -l /etc >> ls-ausgabe.txt
+```
+#### Umleitung des Standardfehlerkanals
+```bash
+ls mich-gibts-nicht  2> ls-fehler.txt     # hier muss die 2 stehen, da wir stderr umleiten
+ls mich-gibts-nicht  2>> ls-fehler.txt    # hier muss die 2 stehen, da wir stderr umleiten
+```
+#### Umleitung beider Kanäle
+```bash
+# in separate Dateien
+ls mich-gibts/ mich-gibts-nicht/ > ergebnis.txt 2>fehler.txt
+
+# in die gleiche Datei
+ls mich-gibts/ mich-gibts-nicht/ > ausgabe-und-fehler.txt 2>&1
+```
+>[!NOTE]
+> Das `&` gibt hier an, dass wir einen *Kanal*/*Filedescriptor* meinen, ansonsten würden die Fehler in eine Datei mit dem Namen `1` umgeleitet werden.
+
 
 
 
