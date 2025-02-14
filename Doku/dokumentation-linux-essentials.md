@@ -542,6 +542,103 @@ ls mich-gibts/ mich-gibts-nicht/ > ausgabe-und-fehler.txt 2>&1
 >[!NOTE]
 > Das `&` gibt hier an, dass wir einen *Kanal*/*Filedescriptor* meinen, ansonsten würden die Fehler in eine Datei mit dem Namen `1` umgeleitet werden.
 
+## UNIX Philosophie
+
+1. eine Aufgabe, diese gut
+2. mit anderen Programmen kommunizieren
+3. zur Kommunikation soll Text verwendet werden
+
+## KISS Prinzip
+
+- Keep it stupid simple
+- Keep it super simple
+- Keep it simple, stupid!
+
+## Kommandopipelines
+
+Syntax:
+```bash
+<kommando1> | <kommando2>
+```
+Mit der *Pipe* (`|`) wird `stdout` von `<kommando1>` mit `stdin` von `<kommando2>` verbunden, so dass `<kommando2>` die Ausgabe von `<kommando1>` entgegenehmen und weiterverarbeiten kann.
+
+### Beispiele:
+```bash
+ls -l /etc/ | less       # der Output von ls -l wird an den Pager less geleitet
+cat /etc/passwd | wc -l  # Anzahl der Benutzer ausgeben
+```
+## Filterkommandos
+
+### grep
+
+Mit `grep` können wir Textströme zeilenweise filtern. 
+
+`grep` nimmt ein `PATTERN`, also einen Suchbegriff bzw. genauer gesagt einen *Regulären Ausdruck* entgegen und gibt nur die Zeilen eines Textstroms aus, in denen dieses `PATTERN` vorkommt.
+
+#### Beispiele:
+```bash
+grep "root" /etc/passwd     # nur die Benutzerkonfiguration von root ausgeben
+```
+### cut
+
+Mit `cut` können wir Textströme **spaltenweise** filtern. 
+
+Für `cut` können wir ein Trennzeichen / *Delimiter* definieren, anhand dessen `cut` einen Textstrom in Spalten / *Fields* unterteilt und nur das oder die gewünschten Felder ausgibt.
+
+#### Beispiele
+```bash
+cut -d: -f1 /etc/passwd     # nur die Login-Namen der Benutzer ausgeben
+cut -d: -f7 /etc/passwd     # nur die Shells der Benutzer ausgeben
+
+cat /etc/passwd | cut -d: -f1 # geht auch, sog. Useless Use of Cat
+```
+### tail
+
+`tail` gibt standardmässig die letzten 10 Zeilen einer Datei aus. 
+
+Die Anzahl der Zeilen kann über die Option `-n` angegeben werden.
+
+#### Beispiele
+```bash
+tail -n 5 ~/.bashrc     # die letzten 5 Zeilen der bashrc ausgeben
+```
+### head
+
+`head` gibt standardmässig die ersten 10 Zeilen einer Datei aus. 
+
+Die Anzahl der Zeilen kann über die Option `-n` angegeben werden.
+
+#### Beispiele
+```bash
+head -n 5 ~/.bashrc     # die ersten 5 Zeilen der bashrc ausgeben
+```
+### sort
+
+Mit `sort` können wir Textströme (nach bestimmten Kriterien) sortiert ausgeben.
+
+### uniq
+
+Mit `uniq` könne wir direkt aufeinanderfolgende gleiche Zeilen zu einer einzigen zusammenfassen.
+
+Um z.B. alle Dublikate/gleiche Zeilen aus einem Textstrom zu entfernen, kombinieren wir (KISS Prinzip) `uniq` und `sort`
+
+>[!NOTE] 
+> `sort` hat übrigens die Option `-u` eingebaut, mit der wir gleiches erreichen können.
+
+#### Beispiele
+```bash
+# Anzahl der verschiedenen Shells in /etc/passwd zählen
+cut -d: -f7 /etc/passwd | sort | uniq | wc -l 
+```
+
+
+
+
+
+
+
+
+
 
 
 
