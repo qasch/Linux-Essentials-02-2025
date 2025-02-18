@@ -691,8 +691,6 @@ cut -d: -f7 /etc/passwd | sort | uniq | wc -l
 ```
 ## Dateisystembaum / Verzeichnisstruktur
 
-FHS - *Filesystem Hierarchy Standard*
-
 | Verzeichnis | Bedeutung | enthält |
 | ----------- |:-------------: | --------- |
 | `/bin` | *binary* |  ausführbare Dateien, die von allen Benutzern ausgeführt werden können. Normalerweise ein *Symlink* auf `/usr/bin`. |
