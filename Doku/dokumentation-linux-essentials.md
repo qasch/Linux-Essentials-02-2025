@@ -352,47 +352,53 @@ Ein `tar`-Archiv kann man sich mit dem Kommando `cat` anzeigen lassen:
 > ```
 
 Einige wichtige Optioenen zu `tar`:
+#### Archiv aus Dateien erstellen
 ```bash
-# Archiv aus Dateien erstellen
 tar -cf archive.tar file1.txt file2.txt file3.txt 
 tar --create --file archive.tar file1.txt file2.txt file3.txt 
-
-# Dateien aus Archiv extrahieren
+```
+#### Dateien aus Archiv extrahieren
+```bash
 tar -xf archive.tar
 tar --extract --file archive.tar
-
-# Die Option -v / --verbose gibt eine Rückmeldung darüber, was tar macht
+```
+#### Die Option -v / --verbose gibt eine Rückmeldung darüber, was tar macht
+```bash
 tar -xvf archive.tar
 tar --extract --verbose --file archive.tar
-
-# Einzelne Datei aus Archiv extrahieren
+```
+#### Einzelne Datei aus Archiv extrahieren
+```bash
 tar -xf archive.tar file_to_extract.txt
-
-# Inhalt eines Archivs anzeigen/auflisten
+```
+#### Inhalt eines Archivs anzeigen/auflisten
+```bash
 tar -tf archiv.tar
 tar --list --file archive.tar
-
-# Datei einem bestehenden Archiv hinzufügen
+```
+#### Datei einem bestehenden Archiv hinzufügen
+```bash
 tar -rf archive.tar other_file.txt
 tar --append --file archive.tar other_file.txt
-
-# Archiv aus einem Verzeichnis erstellen
+```
+#### Archiv aus einem Verzeichnis erstellen
+```bash
 tar -cf archive.tar /absolute/path/to/dir
 tar -cf archive.tar relativ/path/to/dir
+```
+#### Differentielles Archiv erstellen
 
-# > [!NOTE] 
-# > Pfadangaben werden immer mit archiviert! Wir müssen uns also im Vorhinein Gedanken machen, ob wir z.B. einen relativen oder absoluten Pfad angeben.
+#### Bestimmte Dateien *nicht* hinzufügen
 
-# Differentielles Archiv erstellen
+#### Archiv an einem bestimmten Ort extrahieren
 
-# Bestimmte Dateien *nicht* hinzufügen
-
-# Archiv an einem bestimmten Ort extrahieren
-
-
-
+#### Teile des Pfades beim entpacken weglassen
+```bash
 --strip-components=NUMBER
 ```
+> [!NOTE] 
+> Pfadangaben werden immer mit archiviert! Wir müssen uns also im Vorhinein Gedanken machen, ob wir z.B. einen relativen oder absoluten Pfad angeben.
+
 > [!IMPORTANT]
 > Die Option `-f` erfordert **zwingend** ein direkt darauffolgendes Argument - den Namen des Archivs. Insofern ist die Reihenfolge der Optionen hier **nicht** egal.
 
@@ -417,13 +423,14 @@ Auch unter Linux ist es möglich beide Schritte auf einmal mit dem Kommando `tar
 Unter Linux nutzen wir standardmässig drei verschiedene Tools zur Komprimierung: `gzip`, `bzip2` und `xz`.
 
 Die Optionen der drei Kommandos sind mehr oder weniger identisch.
+#### Datei komprimieren:
 ```bash
-# Datei komprimieren:
 gzip somefile
 bzip2 somefile
 xz somefile
-
-# Datei dekomprimieren:
+```
+#### Datei dekomprimieren:
+```bash
 gzip -d somefile.gz
 bzip2 -d somefile.bz2
 xz -d somefile.xz
@@ -461,33 +468,39 @@ Es gibt also für alle drei bestimmte Anwendungsfälle, in denen sie ihre Stärk
 
 #### Komprimiertes Archiv erzeugen
 ```bash
-# gzip komprimiertes Archiv erstellen
+##### gzip komprimiertes Archiv erstellen
+```bash
 tar -czf archiv.tar.gz somdir/
 tar -czvf archiv.tar.gz somdir/     # verboser Output
 
-# bzip2 komprimiertes Archiv erstellen
+##### bzip2 komprimiertes Archiv erstellen
+```bash
 tar -cjf archiv.tar.bz2 somdir/
 tar -czjf archiv.tar.bz2 somdir/     # verboser Output
 
-# xz komprimiertes Archiv erstellen
+##### xz komprimiertes Archiv erstellen
+```bash
 tar -cJf archiv.tar.xz somdir/
 tar -cJvf archiv.tar.xz somdir/     # verboser Output
 ```
 #### Komprimiertes Archiv entpacken
+##### mit gzip komprimiertes Archiv entpacken
 ```bash
-# mit gzip komprimiertes Archiv entpacken
 tar -xzf archiv.tar.gz
 tar -xzvf archiv.tar.gz
-
-# mit bzip2 komprimiertes Archiv entpacken
+```
+##### mit bzip2 komprimiertes Archiv entpacken
+```bash
 tar -xjf archiv.tar.bz2
 tar -xzjf archiv.tar.bz2
-
-# mit xz komprimiertes Archiv entpacken
+```
+##### mit xz komprimiertes Archiv entpacken
+```bash
 tar -xJf archiv.tar.xz
 tar -xJvf archiv.tar.xz
-
-# automatisch jeweiligen Algorithmus anhand der Dateiendung anwenden lassen (Dateiendung muss stimmen!)
+```
+##### automatisch jeweiligen Algorithmus anhand der Dateiendung anwenden lassen (Dateiendung muss stimmen!)
+```bash
 tar -xf archiv.tar.gz
 tar -xf archiv.tar.bz2
 tar -xf archiv.tar.xz
@@ -532,16 +545,30 @@ ls mich-gibts-nicht  2> ls-fehler.txt     # hier muss die 2 stehen, da wir stder
 ls mich-gibts-nicht  2>> ls-fehler.txt    # hier muss die 2 stehen, da wir stderr umleiten
 ```
 #### Umleitung beider Kanäle
+##### in separate Dateien
 ```bash
-# in separate Dateien
 ls mich-gibts/ mich-gibts-nicht/ > ergebnis.txt 2>fehler.txt
-
-# in die gleiche Datei
+```
+##### in die gleiche Datei
+```bash
 ls mich-gibts/ mich-gibts-nicht/ > ausgabe-und-fehler.txt 2>&1
 ```
 >[!NOTE]
 > Das `&` gibt hier an, dass wir einen *Kanal*/*Filedescriptor* meinen, ansonsten würden die Fehler in eine Datei mit dem Namen `1` umgeleitet werden.
 
+### /dev/null
+
+`/dev/null` ist soetwas wie das *Schwarze Loch* eines Linux Systems. Alles was wir dorthin leiten, verschwindet. Wir nutzen einen Redirect nach `/dev/null` ganz bewusst, um z.B. Fehlermeldungen eines Kommandos zu unterdrücken. Oder auch in Skripten, um den normalen Output eines Kommandos zu unterdrücken.
+
+#### Beispiel find und 2>/dev/null
+Wir wollen als regulärer Benutzer mit `find` unser gesamtes Dateisystem nach `.tar` Dateien durchsuchen. Mit folgendem Kommando erhalten wir aber sehr viele `Permission Denied` Fehlermeldungen:
+```bash
+find / -name "*.tar"
+```
+Wir leiten also ganz bewusst alle Fehler nach `/dev/null` um die Ergebnisse klarer sehen zu können:
+```bash
+find / -name "*.tar* 2>/dev/null
+```
 ## UNIX Philosophie
 
 1. eine Aufgabe, diese gut
@@ -576,8 +603,40 @@ Mit `grep` können wir Textströme zeilenweise filtern.
 `grep` nimmt ein `PATTERN`, also einen Suchbegriff bzw. genauer gesagt einen *Regulären Ausdruck* entgegen und gibt nur die Zeilen eines Textstroms aus, in denen dieses `PATTERN` vorkommt.
 
 #### Beispiele:
+##### nur die Benutzerkonfiguration von root ausgeben
 ```bash
-grep "root" /etc/passwd     # nur die Benutzerkonfiguration von root ausgeben
+grep "root" /etc/passwd     
+```
+##### -c --count 
+`grep` zählt die Ergebnisse, hier also die Anzahl der Benutzer, die BASH als Login-Shell nutzen, es wird nur die Anzahl ausgegeben, nicht die Zeilen, die PATTERN enthalten
+```bash
+grep -c bash /etc/passwd    
+```
+##### -v --invert 
+`grep` gibt all das aus, was *nicht* auf das PATTERN passt.
+
+hier: Ausgabe aller Benutzerkonfigurationen, die *nicht* die BASH nutzen
+```bash
+grep -v bash /etc/passwd
+```
+##### -i --ignore-case 
+`grep` ignoriert Gross-und Kleinschreibung
+
+hier: sowohl alias als auch Alias wird gefunden
+```bash
+grep -i alias ~/.bashrc
+```
+##### -n --line-number 
+`grep` zeigt zusätzlich die Zeilennummer an, in der PATTERN gefunden wurde. Sehr praktisch.
+```bash
+grep -n alias ~/.bashrc
+```
+##### -r --recursive 
+`grep` kann so auch ganze Verzeichnisse durchsuchen
+
+hier: gesamtes Home-Verzeichnis von tux nach etwas zu aliasen durchsuchen
+```bash
+grep -r alias /home/tux 
 ```
 ### cut
 
@@ -626,11 +685,39 @@ Um z.B. alle Dublikate/gleiche Zeilen aus einem Textstrom zu entfernen, kombinie
 > `sort` hat übrigens die Option `-u` eingebaut, mit der wir gleiches erreichen können.
 
 #### Beispiele
+Anzahl der verschiedenen Shells in /etc/passwd zählen
 ```bash
-# Anzahl der verschiedenen Shells in /etc/passwd zählen
 cut -d: -f7 /etc/passwd | sort | uniq | wc -l 
 ```
+## Dateisystembaum / Verzeichnisstruktur
 
+FHS - *Filesystem Hierarchy Standard*
+
+| Verzeichnis | Bedeutung |
+| ----------- | --------- |
+| `/bin` | (*binary*) enthält ausführbare Dateien, die von allen Benutzern ausgeführt werden können. Normalerweise ein *Symlink* auf `/usr/bin`. |
+| `/boot` | enthält den/die Linux Kernel (`vmlinuz-6.1.0-25.amd64`), die zugehörige Initiale RAM Disk (`initrd.img-6.1.0-25-amd64`), weitere für den Bootvorgang wichtige Dateien und die Konfiguration des Bootloaders, z.B. `grub` |
+| `/dev` | (*devices*) enthält *Gerätedateien*, z.B. für die vorhanden Speichermedien und Partitionen, `/dev/null`, `/dev/random`, die Filedescriptoren `stdin`, `stdout`, `stderr`, Terminals etc. Dieses Verzeichnis wird automatisch vom Dienst `udev` (*Userspace Dev*)überwacht und gepflegt. |
+| `/etc` | enthält sämtliche systemweiten Konfigurationsdateien. Diese können für gewisse Programme durch die benutzerspezifischen Konfigurationsdateien (im Heimatverzeichnis der Benutzer) überschrieben werden (`/etc/bash.bashrc` -> `~/.bashrc`) |
+| `/home` enthält die Heimatverzeichnisse der regulären Benutzer |
+| `/media` `/mnt` | Verzeichnisse für die *Mountpoints* weiterer/externer Datenträger |
+| `/opt` | (*optional*) hier können Pakete ihre Dateien ablegen, die nicht über die Standardpaketquellen installiert wurden |
+| `/proc` (*processes*) enthält Dateien über das laufende System: laufende Prozesse, Hardware, Kernelkonfiguration. Existiert nur im RAM, ist ein sog. *virtuelles* oder *Pseudodateisystem* |
+| `/root` | Heimatverzeichnis des *Super Users* `root` |
+| `/sys` | ähnlich wie `/proc` bzw. eine nachträgliche Erweiterung, enthält vor allem Dateien/Informationen zur Hardware |
+| `/tmp` | enthält temporäre Dateien |
+| `/usr` | (*Unix System Resources*) enthält Verzeichnisse für die ausführbaren Dateien, Libraries, Source Code, Dokumentationen etc. |
+| `/var` | enthält viele wichtige Dateien wie z.B. *Logdateien* (`/var/log`), E-Mails (`/var/mail`), Cache (`/var/cache`) ... |
+
+## Benutzerkonten
+
+### Root Acount
+
+TODO
+
+
+
+### Benutzer anlegen 
 
 
 
