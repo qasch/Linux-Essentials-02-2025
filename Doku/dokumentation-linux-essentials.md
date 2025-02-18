@@ -699,10 +699,10 @@ FHS - *Filesystem Hierarchy Standard*
 | `/boot` | enthält den/die Linux Kernel (`vmlinuz-6.1.0-25.amd64`), die zugehörige Initiale RAM Disk (`initrd.img-6.1.0-25-amd64`), weitere für den Bootvorgang wichtige Dateien und die Konfiguration des Bootloaders, z.B. `grub` |
 | `/dev` | (*devices*) enthält *Gerätedateien*, z.B. für die vorhanden Speichermedien und Partitionen, `/dev/null`, `/dev/random`, die Filedescriptoren `stdin`, `stdout`, `stderr`, Terminals etc. Dieses Verzeichnis wird automatisch vom Dienst `udev` (*Userspace Dev*)überwacht und gepflegt. |
 | `/etc` | enthält sämtliche systemweiten Konfigurationsdateien. Diese können für gewisse Programme durch die benutzerspezifischen Konfigurationsdateien (im Heimatverzeichnis der Benutzer) überschrieben werden (`/etc/bash.bashrc` -> `~/.bashrc`) |
-| `/home` enthält die Heimatverzeichnisse der regulären Benutzer |
+| `/home` | enthält die Heimatverzeichnisse der regulären Benutzer |
 | `/media` `/mnt` | Verzeichnisse für die *Mountpoints* weiterer/externer Datenträger |
 | `/opt` | (*optional*) hier können Pakete ihre Dateien ablegen, die nicht über die Standardpaketquellen installiert wurden |
-| `/proc` (*processes*) enthält Dateien über das laufende System: laufende Prozesse, Hardware, Kernelkonfiguration. Existiert nur im RAM, ist ein sog. *virtuelles* oder *Pseudodateisystem* |
+| `/proc` | (*processes*) enthält Dateien über das laufende System: laufende Prozesse, Hardware, Kernelkonfiguration. Existiert nur im RAM, ist ein sog. *virtuelles* oder *Pseudodateisystem* |
 | `/root` | Heimatverzeichnis des *Super Users* `root` |
 | `/sys` | ähnlich wie `/proc` bzw. eine nachträgliche Erweiterung, enthält vor allem Dateien/Informationen zur Hardware |
 | `/tmp` | enthält temporäre Dateien |
