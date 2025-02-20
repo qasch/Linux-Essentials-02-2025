@@ -718,6 +718,175 @@ TODO
 
 ### Benutzer anlegen 
 
+#### useradd
+
+- `useradd <user>`
+
+- `useradd -m <user>`
+- `useradd --make-home <user>`
+
+- `/etc/skel`
+
+- `useradd -s /bin/bash <user>`
+- `useradd --shell /bin/bash <user>`
+
+- `useradd -c COMMENT <user>`
+- `useradd --comment COMMENT <user>`
+
+- `useradd -p "PASSWORDHASH" <user>`
+- `useradd --password "PASSWORDHASH" <user>`
+
+- `useradd -g <primary-group> <user>`
+- `useradd -G <list-of-supplementary-groups> <user>`
+
+- `useradd -m -c "Tux Tuxedo" -s /bin/bash tux`
+
+#### passwd
+
+Als `root`:
+```bash
+passwd <user>
+```
+
+Als regulärer Benutzer eigenes Paswsort ändern:
+```bash
+passwd
+```
+
+#### adduser
+
+- ist ein Skript/Wrapper welches im u.a. `useradd` und `passwd` ausführt
+- interaktiv
+- fragt nach Passwort
+- andere Default-Werte als `useradd`
+
+Warum dann `useradd`?
+- Standardmässig nur auf Debian-basierten Distributionen vorhanden!
+
+#### Relevante Dateien
+
+- `/etc/passwd`
+- `/etc/shadow`
+- `/etc/group`
+- `/etc/gshadow`
+
+### Gruppen
+
+- `groups`
+- `id -u`
+- `id`
+- `id`
+- `id`
+- `id`
+
+Gruppe erstellen:
+- `groupadd`
+
+Benutzer einer Gruppe hinzufügen:
+```bash
+usermod -g <primary-group> <user>
+usermod -G <list-of-supplementary-groups> <user>
+usermod -aG <list-of-supplementary-groups> <user>
+```
+Benutzer muss sich neu anmelden / eine neue Login-Shell starten. Oder Kommando `newgrp`.
+
+### sudo
+
+- Super User Do
+- Kommandos als ein andere Benutzer ausführen
+- kann so konfiuriert werden, dass KEIN Passwort eingegeben werden muss
+- eingegebenes Passwort wird für eine gewisse Zeit (15 min) gespeichert
+- es wird das EIGENE Passwort eingegeben, nicht das ROOt-PW
+- User der Gruppe `sudo` (oder `wheel`) hinzufügen
+- Datei **immer** mit dem Kommando `visudo` bearbeiten
+- `sudo !!`
+
+
+## Berechtigungen
+
+- Berechtigungen werden auf Datein angewendet
+
+  u  g  o
+-rw-r--r-- 1 tux tux 5 Feb 12 13:09 file1.txt
+
+### Bedeutung der Berechtigungen für Dateien
+
+User darf:
+
+`r` -> read -> Dateiinhalt lesen
+`w` -> write -> Dateiinhalt ändern -> **nicht** Datei löschen
+`x` -> eXecute -> Datei ausführen
+
+### Bedeutung der Berechtigungen für Verzeichnisse
+
+`r` -> read -> Verzeichnisinhalt lesen bzw. auflisten der Namen der Dateien
+`w` -> write -> Verzeichnisinhalt ändern -> Dateien hinzufügen und löschen
+`x` -> eXecute -> Verzeichnis betreten -> es macht **keinen wirkliche Sinn** wenn dieses Bit bei Verzeichnissen **nicht** gesetzt ist. Dann wird alles etwas seltsam... Wir brauchen dieses Bit, damit Verzeichnisse wir gewünscht funktionieren.
+
+### Symbolische Rechtevergabe
+
+r -> read
+w -> write
+x -> eXecute
+
+u -> user/owner
+g -> group
+o -> others (weder owner noch group)
+a -> all
+
+`+` -> hinzufügen
+`-` -> entziehen
+`=` -> setzten
+
+`chmod g+w file1.txt`
+`chmod o-r file1.txt`
+
+### Numerische/Oktale Rechtevergabe
+
+`r` -> 4    100
+`w` -> 2    010
+`x` -> 1    001
+`-` -> 0    000
+
+```bash
+  7  6  4
+ 111110100
+-rwxr--r-- 1 tux tux 5 Feb 12 13:09 file1.txt
+```
+### Sonderbits
+
+#### SUID Bit
+
+Auf eine **ausführbare Binärdatei** gesetzt, bewirkt das SUID Bit, dass die Datei mit den Berechtigungen des **Besitzers** der Datei ausgeführt wird und **nicht** mit den Berechtigungen des aufrufenden Users.
+```bash
+ls -l /usr/bin/passwd
+
+-rwsr-xr-x 1 root root 68248 Mar 23  2023 /usr/bin/passwd
+```
+
+#### SGID Bit
+
+Auf eine **ausführbare Binärdatei** gesetzt, bewirkt das SGID Bit, dass die Datei mit den Berechtigungen der **Gruppe** der Datei ausgeführt wird und **nicht** mit den Berechtigungen des aufrufenden Users.
+
+Auf ein Verzeichnis gesetzt, bewirkt es, dass neu darin erstellte Dateien der Gruppe zugewiesen werden, der das Verzeichnis gehört und nicht der Gruppe des erstellenden Users.
+
+```bash
+ls -ld /var/mail
+
+drwxrwsr-x 2 root mail 4096 Feb 20 09:26 /var/mail/
+```
+
+#### Sticky Bit
+
+Auf ein Verzeichnis gesetzt, bewirkt es, dass darin enthaltene Dateien nur noch vom Besitzer der Datei genändert oder gelöscht werden dürfen.
+```bash
+ls -ld tmp
+
+drwxrwxrwt 8 root root 4096 Feb 20 09:30 /tmp
+```
+
+
+
 
 
 
