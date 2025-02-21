@@ -327,7 +327,7 @@ Sonderzeichen können durch das sogenannte *Escaping* oder *Maskieren* ihrer Son
 
 Zum Maskieren gibt es drei verschiedene Wege:
 
-1. Maskieren mit dem Backslash `\': Der Backslash maskiert (nur) das **direkt darauffolgende** Zeichen
+1. Maskieren mit dem Backslash `\`: Der Backslash maskiert (nur) das **direkt darauffolgende** Zeichen
 
 2. Maskieren mit einfachen Hochkommata `'`: Einfache Hochkommata maskieren **jedes** in ihnen eingeschlossene Zeichen.
 
@@ -712,7 +712,9 @@ cut -d: -f7 /etc/passwd | sort | uniq | wc -l
 
 ### Root Acount
 
-TODO
+Der Benutzer `root` ist der *SuperUser* eines Linux Systems. Er ist der einzige Benutzer, welcher volle Rechte auf das System hat, also alles darf. Er muss auf jedem System existieren, damit dieses lauffähig ist, beispielsweise um während des Bootvorgangs einzelne Dienste zu starten usw.
+
+Alle 
 
 
 
@@ -774,10 +776,10 @@ Warum dann `useradd`?
 
 - `groups`
 - `id -u`
-- `id`
-- `id`
-- `id`
-- `id`
+- `id -g`
+- `id -G`
+- `id -n`
+- `id- Gn`
 
 Gruppe erstellen:
 - `groupadd`
