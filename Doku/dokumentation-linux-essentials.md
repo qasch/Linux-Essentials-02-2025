@@ -569,18 +569,24 @@ Wir leiten also ganz bewusst alle Fehler nach `/dev/null` um die Ergebnisse klar
 find / -name "*.tar* 2>/dev/null
 ```
 ## UNIX Philosophie
+Die Unix-Philosophie ist ein Satz von Prinzipien für Software-Design, die ursprünglich in den 1970er Jahren mit dem Unix-Betriebssystem entwickelt wurden. Sie betont Einfachheit, Modularität und Wiederverwendbarkeit.
 
-1. eine Aufgabe, diese gut
-2. mit anderen Programmen kommunizieren
-3. zur Kommunikation soll Text verwendet werden
+Douglas McIlroy, der Erfinder der Unixpipes, fasste die Philosophie folgendermaßen zusammen:
+
+- Schreibe Computerprogramme so, dass sie nur eine Aufgabe erledigen und diese gut machen.
+- Schreibe Programme so, dass sie zusammenarbeiten.
+- Schreibe Programme so, dass sie Textströme verarbeiten, denn das ist eine universelle Schnittstelle.
+
+> "Write programs that do one thing and do it well."
 
 ## KISS Prinzip
 
-- Keep it stupid simple
-- Keep it super simple
-- Keep it simple, stupid!
+- "Keep it stupid simple"
+- "Keep it super simple"
+- "Keep it simple, stupid!"
 
 ## Kommandopipelines
+Kommandopipelines sind ein mächtiges Werkzeug, mit dem sich erst die ganze Stärke der Kommandozeile nutzen lässt.
 
 Syntax:
 ```bash
@@ -594,6 +600,7 @@ ls -l /etc/ | less       # der Output von ls -l wird an den Pager less geleitet
 cat /etc/passwd | wc -l  # Anzahl der Benutzer ausgeben
 ```
 ## Filterkommandos
+Durch die Kombination von Filterkommandos und Pipelines extrahieren wir genau die Informationen aus Textdateien, die wir benötigen. Und zwar im Speicher, ohne dazu weitere Textdateien anlegen zu müssen.
 
 ### grep
 
