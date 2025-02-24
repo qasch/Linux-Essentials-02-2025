@@ -808,111 +808,183 @@ passwd
 Dieses Kommando ist aber standardmässig nur auf Debian-basierten Distributionen vorinstalliert!
 
 #### Relevante Dateien
+Beim Anlegen von Benutzern passiert übrigens nur folgendes:
 
-- `/etc/passwd`
-- `/etc/shadow`
-- `/etc/group`
-- `/etc/gshadow`
+- Ein Eintrag in der `/etc/passwd` mit den Benutzerinformationen wird erzeugt
+- Das Passwort wird in die `/etc/shadow` eingetragen
+- Die primäre Gruppe wird zur `/etc/group` hinzugefügt (und eventuell andere Gruppenzugehörigkeiten angepasst)
+- In der `/etc/gshadow` wird ein Eintrag ohne Passwort erzeugt (diese Datei bzw. Gruppenpasswörter werden eh nicht genutzt)
+
+Das war's. Nichts weiter. Keine Magie, nichts im Hintergrund. Nur Veränderung von Textdateien. Das ist ein gutes Beispiel dafür, wie die Konfiguration eines Linux System generell funktioniert. 
 
 ### Gruppen
 
-TODO
+Mit Gruppen können mehrere Benutzer zusammengefasst und ihnen gemeinsame Berechtigungen für Dateien und Verzeichnisse gegeben werden.
 
-- `groups`
-- `id -u`
-- `id -g`
-- `id -G`
-- `id -n`
-- `id- Gn`
+Im Unterschied zu Windows können Gruppen nur einzelne Benutzer enthalten, keine weiteren Gruppen.
 
-Gruppe erstellen:
-- `groupadd`
+Für die Anzeige der Gruppenzugehörigkeiten kann man die Kommandos `groups` oder `id` benutzen.
 
-Benutzer einer Gruppe hinzufügen:
+#### Primäre Gruppe
+Jeder Benutzer hat genau eine primäre Gruppe. Diese ist in `/etc/passwd` eingetragen. Sie ist nötig, da z.B. beim Erstellen von Dateien diese einem Benutzer und einer Gruppe zugewiesen werden.
+
+#### Sekundäre Gruppen
+Ein Benutzer kann aber auch mehreren zusätzlichen Gruppen angehören. Die Zugehörigkeiten sind in der `/etc/group` eingetragen.
+
+### Gruppe erstellen:
+Auf allen Linux Systemen existiert das Kommando `groupadd`
+```bash
+groupadd <gruppe>
+```
+### Benutzer einer Gruppe hinzufügen:
 ```bash
 usermod -g <primary-group> <user>
 usermod -G <list-of-supplementary-groups> <user>
 usermod -aG <list-of-supplementary-groups> <user>
 ```
-Benutzer muss sich neu anmelden / eine neue Login-Shell starten. Oder Kommando `newgrp`.
+Damit Gruppenzugehörigkeiten gültig werden, muss die Datei `/etc/group` neu eingelesen werden. Dies geschieht z.B. wenn der Benutzer muss sich neu anmeldet bzw. eine neue Login-Shell startet. 
+
+Um die Gruppenzugehörigkeit in der aktuellen Shell zu aktualisieren, kann auch das Kommando `newgrp <gruppe>` genutzt werden.
 
 ### sudo
 
-TODO
+Mittels `sudo` (*Superuser do*) können Kommandos als ein anderer Benutzer ausgeführt werden. Standardmässig wird es genutzt, um als normaler Benutzer Root-Rechte zu erlangen, ohne sich als User `root` anmelden zu müssen.
 
-- Super User Do
-- Kommandos als ein andere Benutzer ausführen
-- kann so konfiuriert werden, dass KEIN Passwort eingegeben werden muss
-- eingegebenes Passwort wird für eine gewisse Zeit (15 min) gespeichert
-- es wird das EIGENE Passwort eingegeben, nicht das ROOt-PW
-- User der Gruppe `sudo` (oder `wheel`) hinzufügen
-- Datei **immer** mit dem Kommando `visudo` bearbeiten
-- `sudo !!`
+#### Vorteile von `sudo`
+
+- Benutzer gibt sein **eigenes** Passwort ein, nicht das von `root`
+- Passwort von `root` muss nicht geteilt werden (sehr sinnvoll bei mehreren Administratoren)
+- sehr fein granulare Rechtevergabe möglich: z.B. als ein bestimmter Bentuzer nur bestimmte Kommandos ausführen etc.
+- kann auch so konfiuriert werden, dass gar kein Passwort eingegeben werden muss (nur unter ganz bestimmten Bedingungen sinnvoll)
+- das eingegebene Passwort wird für eine gewisse Zeit (15 min) gespeichert und muss nicht immer wieder eingegeben werden und muss nicht immer wieder eingegeben werden
+- alle `sudo` Kommandos werden in `/var/log/autho.log` protokolliert und sind zusätzlich in der History der jeweiligen Benutzer
+- es wird vermieden, dass Benutzer aus Faulheit dauerhaft eine Root-Shell offen haben
+
+
+#### Nachteile von `sudo`
+- `sudo` ist Software und Software ist **nie fehlerfrei**
+- Sicherheitslücken in `sudo` könnten ausgenutzt werden
+- könnte falsch/unsicher konfiuriert werden
+
+#### Konfiguration
+Generell erfolgt die Konfiguration in der Datei `/etc/sudoers`. Diese sollte **nie direkt** sondern **immer** mit dem Kommando `visudo` bearbeitet werden.
+
+Der einfachste Weg, einem User Root-Rechte mittels `sudo` zu gewähren, besteht darin, diesen User der Gruppe `sudo` bzw. `wheel` (je nach Distribution) hinzuzufügen.
+
+Von einem Eintrag des/der User in die `/etc/sudoers` ist abzuraten, es sei denn, `sudo` soll feiner konfiuriert werden
+
+>[!NOTE] 
+> Falls man das vorherige Kommando erneut mit Root-Rechten ausführen will ist das Kommando `sudo !!` sehr nützlich. 
+> 
+> Das erste `!` steht für die History Expansion, das zweite für das vorherige Kommando.
 
 
 ## Berechtigungen
 
-TODO
+Berechtigungen in Linux steuern den Zugriff auf Dateien und Verzeichnisse für *Benutzer* und *Gruppen*. Sie legen fest, wer lesen (`r`), schreiben (`w`) und ausführen (`x`) darf.
 
-- Berechtigungen werden auf Datein angewendet
-
+Der folgende Auszug von `ls -l file1.txt` sagt folgendes aus:
+```bash
   u  g  o
 -rw-r--r-- 1 tux tux 5 Feb 12 13:09 file1.txt
+```
+- Der User/Besitzer (`u`) darf den Inhalt der Datei lesen und ändern (`rw`)
+- Mitglieder der Gruppe (`g`) dürfen den Inhalt der Datei nur lesen (`r`)
+- Alle anderen Benutzer, die weder der Besitzer, noch Mitglieder der Gruppe sind, dürfen den Inhalt der Datei lesen (`r`)
 
 ### Bedeutung der Berechtigungen für Dateien
 
-User darf:
-
-`r` -> read -> Dateiinhalt lesen
-`w` -> write -> Dateiinhalt ändern -> **nicht** Datei löschen
-`x` -> eXecute -> Datei ausführen
+`r` (*read*) -> Dateiinhalt lesen
+`w` (*write*) -> Dateiinhalt ändern -> aber **nicht** Datei löschen
+`x` (*eXecute*) -> Datei ausführen
 
 ### Bedeutung der Berechtigungen für Verzeichnisse
 
-`r` -> read -> Verzeichnisinhalt lesen bzw. auflisten der Namen der Dateien
-`w` -> write -> Verzeichnisinhalt ändern -> Dateien hinzufügen und löschen
-`x` -> eXecute -> Verzeichnis betreten -> es macht **keinen wirkliche Sinn** wenn dieses Bit bei Verzeichnissen **nicht** gesetzt ist. Dann wird alles etwas seltsam... Wir brauchen dieses Bit, damit Verzeichnisse wir gewünscht funktionieren.
+`r` (*read*) -> Verzeichnisinhalt lesen bzw. das Auflisten der Namen der Dateien
+`w` (*write*) -> Verzeichnisinhalt ändern -> Dateien hinzufügen und löschen
+`x` (*eXecute*) -> Verzeichnis betreten 
+
+>[!IMPORTANT] 
+> Es macht **keinen wirkliche Sinn** wenn das Execute Bit bei Verzeichnissen **nicht** gesetzt ist. Dann wird alles etwas seltsam... Wir brauchen dieses Bit, damit Verzeichnisse wie gewünscht funktionieren.
 
 ### Symbolische Rechtevergabe
+Hierbei werden *Symbole* für die Berechtigungen verwendet. Diese Art der Rechtevergabe ist sehr intuitiv und eignet sich besonders dafür, einzelne Berechtigungen hinzuzufügen oder zu entfernen, ohne die bestehenden Berechtigungen zu verändern. Es ist auch einfach, diese Vorgänge wieder rückgängig zu machen.
 
-r -> read
-w -> write
-x -> eXecute
+#### Symbole
 
-u -> user/owner
-g -> group
-o -> others (weder owner noch group)
-a -> all
+`r` -> read
+`w` -> write
+`x` -> eXecute
+
+`u` -> user/owner
+`g` -> group
+`o` -> others (weder owner noch group)
+`a` -> all
 
 `+` -> hinzufügen
 `-` -> entziehen
 `=` -> setzten
 
-`chmod g+w file1.txt`
-`chmod o-r file1.txt`
-
+Der Gruppe Schreibrechte hinzufügen:
+```bash
+chmod g+w file1.txt
+```
+Dem Besitzer Leserechte entfernen:
+```bash
+chmod o-r file1.txt
+```
+Besitzer und Gruppe Schreib- und Leserechte
+```bash
+chmod ug+rw file1.txt
+```
+Dem Besitzer Ausführungsrechte hinzufügen, der Gruppe Schreibrechte entziehen, allen anderen Leserechte hinzufügen.
+```bash
+chmod u+x,g-w,o+r file1.txt
+```
 ### Numerische/Oktale Rechtevergabe
+Die numerische oder oktale Rechtevergabe verwendet Zahlen des Oktalsystems, um Berechtigungen gleichzeitig für Besitzer, Gruppe und Others zu vergeben. 
 
-`r` -> 4    100
-`w` -> 2    010
-`x` -> 1    001
-`-` -> 0    000
+Es eignet sich besonders für Situationen, in denen wir eine Datei oder Verzeichnis in einen expliziten Zustand versetzten wollen.
 
+Interessant ist die Herkunft der Zahlen für die Berechtigungen. Übersetzen wir sie doch einmal ins Binärsystem:
+
+| Symbol | Okal | Binär |
+| ------ | ---- | ----- |
+| `r` | `4` | `100` |
+| `w` | `2` | `010` |
+| `x` | `1` | `001` |
+| `-` | `0` | `000` |
+
+Wir sehen, dass das gesetzte Bit *wandert* bzw. sich immer um eine Position verschiebt. Sehen wir uns das einmal im Listing von `ls -l` an:
 ```bash
   7  6  4
  111110100
 -rwxr--r-- 1 tux tux 5 Feb 12 13:09 file1.txt
+
+111 -> 7
+110 -> 6
+100 -> 4
 ```
+Ist also ein bestimmtes Recht gesetzt, bedeutet dass, das hier binär auch eine `1` steht. Wir sehen sozusagen ein Abbild dessen, was wirklich im Speicher passiert. Toll, oder?
+
 ### Sonderbits
+Zusätzlich gibt es noch drei Sonderbits, die gewisse Dinge ermöglichen, damit unser System funktioniert:
 
 #### SUID Bit
 
 Auf eine **ausführbare Binärdatei** gesetzt, bewirkt das SUID Bit, dass die Datei mit den Berechtigungen des **Besitzers** der Datei ausgeführt wird und **nicht** mit den Berechtigungen des aufrufenden Users.
+
+##### Beispiel `/etc/passwd`
 ```bash
 ls -l /usr/bin/passwd
 
--rwsr-xr-x 1 root root 68248 Mar 23  2023 /usr/bin/passwd
+-rwsr-xr-x 1 root root 68248 Feb 24  2025 /usr/bin/passwd
+
+ls -l /etc/shadow
+
+-rw-r----- 1 root shadow 1619 Feb 24 2025 /etc/shadow
 ```
+Das Kommando kann also von einem regulären Benutzer ausgeführt werden, läuft dann aber mit Root-Rechten und kann ja auch nur so den Inhalt der Datei `/etc/shadow` ändern.
 
 #### SGID Bit
 
@@ -925,6 +997,7 @@ ls -ld /var/mail
 
 drwxrwsr-x 2 root mail 4096 Feb 20 09:26 /var/mail/
 ```
+So werden alle E-Mails der Gruppe `mail` zugeordnet und können vom Mailserver hinzugefügt und auch gelöscht werden.
 
 #### Sticky Bit
 
@@ -934,12 +1007,46 @@ ls -ld tmp
 
 drwxrwxrwt 8 root root 4096 Feb 20 09:30 /tmp
 ```
-# Links
+So ist es einem regulären Benutzer nicht möglich, Dateien eines anderen Benutzers zu ändern oder zu löschen.
 
-TODO
+## Links
 
+### Symbolische Links / Symlinks
+Sind im Prinzip das Gleiche wie Verknüpfungen unter Windows. Ein Symlink verweist auf eine andere Datei oder gesamtes Verzeichnis, genauer gesagt *auf den Pfad* zu einer Datei oder Verzeichnis. Es ist eine zusätzliche Inode, die auf ein Ziel verweist. Symlinks können auch über Partitionsgrenzen hinaus bestehen. Wird das Original gelöscht, bleibt ein sog. *toter* oder *verwaister* Link zurück, der nicht mehr funktioniert.
+```bash
+ln -s original.txt symlink.txt
+ln -s originalverzeichnis symlinkverzeichnis
+```
+Symlinks werden z.B. von Webservern genutzt: 
+- `/etc/apache2/sites-available` -> alle vorhandenen Konfigurationsdateien für Websites (Original)
+- `/etc/apache2/sites-enabled` -> nur die *aktiven* Konfigurationsdateien für Websites (Symlink)
 
+### Hardlinks
+Hardlinks sind eigentlich lediglich Dateinamen. Mehrere Dateinamen bzw. Hardlinks können auf den gleichen Bereich im Speicher bzw. die gleiche Datei zeigen. Ein Hardlink ist nicht mehr vom Original zu unterscheiden, er hat die selbe Inode wie das Original. Wird das "Original" gelöscht, ist die Datei weiterhin über den "Link" bzw. jetzt neuen Dateinamen zu erreichen.
 
+Hardlinks funktionieren daher natürlich **nicht** auf Verzeichnisse oder über Partitionsgrenzen hinaus.
+```bash
+ln original.txt hardlink.txt
+```
+Man kann die Anzahl der Hardlinks mit `ls -l` sehen (Spalte direkt nach den Berechtigungen) bzw. in der Ausgabe des Kommandos `stat`:
+```bash
+ln file1.txt hardlink-file1
+ls -l file1.txt
+
+-rw-r--r-- 2 tux tux 5 Feb 12 13:09 file1.txt
+
+stat file1.txt
+
+  File: file1.txt
+  Size: 5         	Blocks: 8          IO Block: 4096   regular file
+Device: 254,1	Inode: 1177496     Links: 2
+Access: (0644/-rw-r--r--)  Uid: ( 1000/     tux)   Gid: ( 1000/     tux)
+Access: 2025-02-17 08:55:39.987803189 +0100
+Modify: 2025-02-12 13:09:04.146349786 +0100
+Change: 2025-02-24 17:31:49.220713220 +0100
+ Birth: 2025-02-12 11:45:38.078409807 +0100
+```
+Hardlinks werden im System verwendet, um Speicherplatz zu sparen z.B. für bestimmte Systemkommandos. Auch nutzen manche Backup Lösungen Hardlinks um inkrementelle Backups zu erstellen.
 
 
 
