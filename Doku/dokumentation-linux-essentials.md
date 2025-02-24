@@ -467,19 +467,17 @@ Es gibt also für alle drei bestimmte Anwendungsfälle, in denen sie ihre Stärk
 
 ### Erstellen und Entpacken eines komprimierten Archivs direkt mit `tar`
 
-#### Komprimiertes Archiv erzeugen
-```bash
-##### gzip komprimiertes Archiv erstellen
+#### gzip komprimiertes Archiv erstellen
 ```bash
 tar -czf archiv.tar.gz somdir/
 tar -czvf archiv.tar.gz somdir/     # verboser Output
-
-##### bzip2 komprimiertes Archiv erstellen
+```
+#### bzip2 komprimiertes Archiv erstellen
 ```bash
 tar -cjf archiv.tar.bz2 somdir/
 tar -czjf archiv.tar.bz2 somdir/     # verboser Output
-
-##### xz komprimiertes Archiv erstellen
+```
+#### xz komprimiertes Archiv erstellen
 ```bash
 tar -cJf archiv.tar.xz somdir/
 tar -cJvf archiv.tar.xz somdir/     # verboser Output
