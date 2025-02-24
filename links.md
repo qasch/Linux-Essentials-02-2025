@@ -18,3 +18,7 @@
 
 - [Website Pearson Vue](https://www.pearsonvue.com/)
 - [Registrierung LPI ID](https://cs.lpi.org/caf/Xamman/register)
+
+## Podcasts
+- [Chaos Radio](https://chaosradio.de/episoden)
+- [Chaos Radio zu Backups](https://chaosradio.de/cr270-daten-archivieren-wiederherstellen-und-loeschen)
