@@ -246,14 +246,18 @@ Aliase werden z.B. direkt in der Datei `~/.bashrc` oder besser noch in der Datei
 
 Innerhalb einer laufenden Shell können weitere Shells gestartet werden. Dies sind sogenannte *Subshell* oder *Kindshells*. Diese können entweder aktiv, z.B. durch die Eingabe des Kommandos `bash` gestartet werden, Subshells werden aber auch oft gestartet, ohne dass wir dies aktiv machen.
 
-Es ist wichtig zu wissen, dass z.B. Aliase *nicht* in Subshells vererbt werden!
+Es ist wichtig zu wissen, dass z.B. Aliase und Variablen *nicht* in Subshells vererbt werden!
 
-TODO
+Subshells begegnen uns ziemlich oft - z.B. werden Kommandos, Funktionen, Skripte usw. in Subshells ausgeführt, auch wenn wir davon direkt gar nichts mitbekommen.
 
 Auch beim Wechsel in einen anderen Benutzeraccount wird eine Subshell mit den Berechtigungen dieses Benutzers gestartet.
 
-Wir können uns einen Überblick über die momentan laufenden Shells bzw. Subshells mit dem Kommando `ps` verschaffen. Mehr zu `ps` siehe [unten].
+Wir können uns einen Überblick über die momentan laufenden Shells bzw. Subshells mit dem Kommando `ps` verschaffen.
 
+#### Ausgabe aller Prozesse des Benutzers, die mit einem Terminal verbunden sind
+```bash
+ps -a
+```
 ## Variablen
 
 ### Umgebungsvariablen / Environment Variables
@@ -266,12 +270,9 @@ $HOME       # Heimatverzeichnis des aktuellen Benutzers
 $PWD        # absoluter Pfad des aktuellen Verzeichnisses
 $USER       # Login Name des aktuellen Benutzers
 $SHELL      # Shell des aktuellen Benutzers
-
 $PATH       # Liste der Verzeichnisse, die nach ausführbaren Dateien durchsucht werden, so dass wir diese ohne eine Pfadangabe aufrufen können
 ```
 Systemvariablen können unterschiedliche Werte enthalten, je nachdem welcher Benutzer angemeldet ist. 
-
-> [!TODO] Wo sind diese Variablen definiert?
 
 ### Shellvariablen / Shell Variables
 
@@ -657,9 +658,12 @@ cat /etc/passwd | cut -d: -f1 # geht auch, sog. Useless Use of Cat
 
 Die Anzahl der Zeilen kann über die Option `-n` angegeben werden.
 
+Eine sehr nützliche Option von `tail` ist die Option `-f` / `--follow`. Damit können wir Änderungen an einer Datei sozusagen *live* beobachten. Wird oft in Verbindung mit Log-Dateien genutzt, um zu verfolgen, was gerade passiert. 
+
 #### Beispiele
 ```bash
 tail -n 5 ~/.bashrc     # die letzten 5 Zeilen der bashrc ausgeben
+tail -f /var/log/apache2/access.log   # Zugriffe auf den Webserver verfolgen
 ```
 ### head
 
@@ -714,56 +718,94 @@ cut -d: -f7 /etc/passwd | sort | uniq | wc -l
 
 Der Benutzer `root` ist der *SuperUser* eines Linux Systems. Er ist der einzige Benutzer, welcher volle Rechte auf das System hat, also alles darf. Er muss auf jedem System existieren, damit dieses lauffähig ist, beispielsweise um während des Bootvorgangs einzelne Dienste zu starten usw.
 
-Alle 
+### Reguläre Benutzer
 
+Alle *regulären* Benutzer haben **eingeschränkte** Rechte. Sie dürfen z.B. nicht alle Kommandos ausführen oder generell irgendwelche Änderungen am System vornehmen. 
 
+Im Hintergrund wird das mehr oder weniger alles über die Berechtigungen an Dateien geregelt.
+
+Reguläre Benutzer können sich am System anmelden und interaktiv Kommandos ausführen. Dazu haben sie in der `/etc/passwd` eine *Login Shell* zugewiesen.
+
+### Systembenutzer / Servicenutzer / Pseudobenutzer
+
+Es gibt eine weitere Bentuzergruppe mit eingeschränkten Rechten. Das fällt uns auf, wenn wir die Datei `/etc/passwd` inspizieren. Die Mehrzahl der Benutzer haben wir gar nicht selbst angelegt, sie wurden automatisch vom System erzeugt, als bestimmte Dienste/Services installiert wurden.
+
+Genau das ist der Sinn dieser Benutzer: So können bestimmte Dienste bzw. Prozesse mit deren Berechtigungen ausgeführt werden um die Sicherheit des Systems zu erhöhen. Ein kompromittierter Dienst erhält so also nicht direkt Zugriff auf das gesamte System.
+
+Beispiel: `www-data` für Webserver wie *Apache oder Nginx* - selbst wenn ein Angreifer den Webserver übernimmt, kann er nicht auf andere Systemdateien zugreifen.
+
+Pseudobenutzer haben keine Login-Shell, ihnen wird `/usr/sbin/nologin` zugewiesen. Sie können sich also nicht am System anmelden und Kommandos ausführen.
 
 ### Benutzer anlegen 
 
+Zum Anlegen von Benutzern existiert auf jedem System das Kommando `useradd`. Mit diesem Kommando können ausschliesslich Benutzer angelegt werden, aber z.B. keine Passwörter generiert werden (*KISS Prinzip*).
+
+Die grundlegende Syntax von `useradd` ist nicht wirklich kompliziert, hier einige der gängigen Optionen:
+
 #### useradd
 
-- `useradd <user>`
+Benutzer anlegen. Obwohl ein Eintrag für ein Home-Verzeichnis in der `/etc/passwd` erzeugt wird, wird dies **nicht** angelegt
+```bash
+useradd <user>
+```
+Die Option `-m` bewirkt, dass unterhalb von `/home` ein Verzeichnis mit dem Namen des Benutzers erzeugt und alle Dateien aus `/etc/skel` dorthin kopiert werden 
+```bash
+useradd -m <user>
+useradd --make-home <user>
+```
+Benutzer eine Login-Shell zuweisen
+```bash
+useradd -s /bin/bash <user>
+useradd --shell /bin/bash <user>
+```
+Kommentarfeld für den vollen Namen des Benutzers und weitere Informationen
+```bash
+useradd -c "Voller Name des Benutzers" <user>
+useradd --comment "Voller Name des Benutzers" <user>
+```
+Wir können dem Benutzer auch bereits beim erzeugen ein Passwort mitgeben. **Wichtig:** Hier muss ein für das System passender *gesaltener* HASH angegeben werden. Der Eintrag wird exakt so in die `/etc/shadow` eingetragen.
+```bash
+useradd -p "PASSWORDHASH" <user>
+useradd --password "PASSWORDHASH" <user>
+```
+Schwer ist das nicht wirklich - wir können dazu das Kommando `openssl` verweden:
+```bash
+openssl passwd -6 PASSWORT
+```
+Die Option `-6` weist `openssl` an, den für Linux empfohlenen sicheren *SHA-512* Algorithmus zu verwenden.
 
-- `useradd -m <user>`
-- `useradd --make-home <user>`
+In einem Rutsch sähe das folgendermassen aus:
+```bash
+useradd -m -c "User mit Passwort" -p $(openssl passwd -6 'My!Secret#Password' -s /bin/bash userwithpass
+```
 
-- `/etc/skel`
-
-- `useradd -s /bin/bash <user>`
-- `useradd --shell /bin/bash <user>`
-
-- `useradd -c COMMENT <user>`
-- `useradd --comment COMMENT <user>`
-
-- `useradd -p "PASSWORDHASH" <user>`
-- `useradd --password "PASSWORDHASH" <user>`
-
-- `useradd -g <primary-group> <user>`
-- `useradd -G <list-of-supplementary-groups> <user>`
+Neuen User eine bestimmte Primäre Gruppe zuordnen:
+```bash
+useradd -g <primary-group> <user>
+```
+Neuen User einer Liste von zusätzlichen Gruppen zuordnen:
+```bash
+useradd -G <list-of-supplementary-groups> <user>
+```
+Standarbeispiel zum Anlegen eines Benutzers
 
 - `useradd -m -c "Tux Tuxedo" -s /bin/bash tux`
 
 #### passwd
-
-Als `root`:
+Das Kommando ermöglicht die Änderung von Passwörtern. Mit Root-Rechten können so die Passwörter aller Benutzer geändert werden:
 ```bash
 passwd <user>
 ```
 
-Als regulärer Benutzer eigenes Paswsort ändern:
+Als regulärer Benutzer kann man damit sein eigenes Paswsort ändern:
 ```bash
 passwd
 ```
-
 #### adduser
 
-- ist ein Skript/Wrapper welches im u.a. `useradd` und `passwd` ausführt
-- interaktiv
-- fragt nach Passwort
-- andere Default-Werte als `useradd`
+`adduser` ist ein Perl-Skript, welches u.a. die Kommandos  `useradd` und `passwd` ausführt. Es ist *interaktiv* und fragt direkt nach einem Passwort für den neuen Benutzer. Es sind andere Default-Werte gesetzt als bei `useradd`.
 
-Warum dann `useradd`?
-- Standardmässig nur auf Debian-basierten Distributionen vorhanden!
+Dieses Kommando ist aber standardmässig nur auf Debian-basierten Distributionen vorinstalliert!
 
 #### Relevante Dateien
 
@@ -773,6 +815,8 @@ Warum dann `useradd`?
 - `/etc/gshadow`
 
 ### Gruppen
+
+TODO
 
 - `groups`
 - `id -u`
@@ -794,6 +838,8 @@ Benutzer muss sich neu anmelden / eine neue Login-Shell starten. Oder Kommando `
 
 ### sudo
 
+TODO
+
 - Super User Do
 - Kommandos als ein andere Benutzer ausführen
 - kann so konfiuriert werden, dass KEIN Passwort eingegeben werden muss
@@ -805,6 +851,8 @@ Benutzer muss sich neu anmelden / eine neue Login-Shell starten. Oder Kommando `
 
 
 ## Berechtigungen
+
+TODO
 
 - Berechtigungen werden auf Datein angewendet
 
@@ -886,6 +934,9 @@ ls -ld tmp
 
 drwxrwxrwt 8 root root 4096 Feb 20 09:30 /tmp
 ```
+# Links
+
+TODO
 
 
 
